@@ -1,1 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>APEX</title>
 
+  <style>
+    body{
+      margin:0;
+      font-family:Arial;
+      color:white;
+      background:radial-gradient(circle at top,#7c3aed,#000);
+    }
+
+    header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:12px;
+      background:rgba(0,0,0,0.5);
+    }
+
+    .logoBox{
+      font-size:22px;
+      font-weight:bold;
+      padding:6px 12px;
+      background:linear-gradient(45deg,#7c3aed,#2563eb);
+      border-radius:10px;
+      box-shadow:0 0 15px #7c3aed;
+    }
+
+    .btn{
+      padding:10px 14px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      background:#5865F2;
+      color:white;
+      margin-top:10px;
+    }
+
+    .proBtn{
+      background:#ff3d7f;
+      display:none;
+    }
+
+    .discord{
+      display:none;
+      padding:10px 14px;
+      background:#5865F2;
+      border-radius:8px;
+      color:white;
+      text-decoration:none;
+    }
+
+    .page{
+      display:none;
+      justify-content:center;
+      align-items:center;
+      height:80vh;
+      text-align:center;
+    }
+
+    .active{
+      display:flex;
+    }
+
+    .box{
+      width:320px;
+      padding:20px;
+      background:rgba(255,255,255,0.08);
+      border-radius:12px;
+    }
+
+    input,textarea,select{
+      width:90%;
+      padding:10px;
+      margin:6px 0;
+      border:none;
+      border-radius:6px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logoBox">APEX</div>
+
+  <button id="proBtn" class="btn proBtn" onclick="openPro()">APPLY PRO</button>
+
+  <a id="discordBtn" class="discord" href="https://discord.gg/uKsnSB3ZwU" target="_blank">
+    JOIN DISCORD
+  </a>
+</header>
+
+<!-- PAGE 1 -->
+<div id="page1" class="page active">
+  <div class="box">
+    <h2>APEX APPLICATION</h2>
+
+    <input id="discord" placeholder="Discord Username">
+    <input id="epic" placeholder="Epic Username">
+    <textarea id="reason" placeholder="Why join APEX?"></textarea>
+
+    <button class="btn" onclick="next()">Next</button>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div id="page2" class="page">
+  <div class="box">
+    <h2>SELECT RANK</h2>
+
+    <select id="rank">
+      <option value="">Choose Rank</option>
+      <option>Bronze</option>
+      <option>Silver</option>
+      <option>Gold</option>
+      <option>Platinum</option>
+      <option>Diamond</option>
+      <option>Champion</option>
+      <option>Unreal</option>
+    </select>
+
+    <button class="btn" onclick="back()">Back</button>
+    <button class="btn" onclick="submit()">Submit</button>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div id="page3" class="page">
+  <div class="box">
+    <h2>SUBMITTED</h2>
+    <p>Check Discord for updates</p>
+  </div>
+</div>
+
+<!-- PRO PAGE -->
+<div id="page4" class="page">
+  <div class="box">
+    <h2>PRO APPLICATION</h2>
+
+    <input id="proDiscord" placeholder="Discord Username">
+    <input id="proEpic" placeholder="Epic Username">
+    <input id="clip" placeholder="Gameplay Clip (REQUIRED)">
+
+    <button class="btn" onclick="submitPro()">Submit PRO</button>
+  </div>
+</div>
+
+<script>
+const WEBHOOK = "PASTE_YOUR_WEBHOOK_HERE";
+
+/* PAGE SWITCH */
+function show(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function next(){
+  if(!discord.value || !epic.value || !reason.value){
+    alert("Fill everything");
+    return;
+  }
+  show("page2");
+}
+
+function back(){
+  show("page1");
+}
+
+function submit(){
+  if(!rank.value){
+    alert("Select rank");
+    return;
+  }
+
+  fetch(WEBHOOK,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      content:"🔥 NEW APEX APPLICATION",
+      embeds:[{
+        title:"APEX APPLY",
+        fields:[
+          {name:"Discord",value:discord.value},
+          {name:"Epic",value:epic.value},
+          {name:"Reason",value:reason.value},
+          {name:"Rank",value:rank.value}
+        ]
+      }]
+    })
+  });
+
+  show("page3");
+
+  document.getElementById("discordBtn").style.display="block";
+  document.getElementById("proBtn").style.display="block";
+}
+
+function openPro(){
+  show("page4");
+}
+
+function submitPro(){
+  if(!clip.value){
+    alert("Clip required");
+    return;
+  }
+
+  fetch(WEBHOOK,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      content:"🏆 PRO APPLICATION",
+      embeds:[{
+        title:"PRO TRYOUT",
+        fields:[
+          {name:"Discord",value:proDiscord.value},
+          {name:"Epic",value:proEpic.value},
+          {name:"Clip",value:clip.value}
+        ]
+      }]
+    })
+  });
+
+  alert("PRO SENT");
+  show("page3");
+}
+</script>
+
+</body>
+</html>
